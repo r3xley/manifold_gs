@@ -7,4 +7,8 @@ def extract_keypoints(image):
     return kp, des
 
 def match_keypoints(des1, des2):
-    return
+    bf = cv2.BFMatcher()
+    matches = bf.match(des1, des2)
+    matches = sorted(matches, key = lambda x:x.distance)
+
+    return matches
