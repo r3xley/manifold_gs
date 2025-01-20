@@ -26,3 +26,6 @@ def fund_matrix(kp1, kp2, matches):
 
     F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
     return F, mask, pts1, pts2
+
+def essential_matrix(kp1, kp2, matches, K):
+    return
