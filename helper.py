@@ -14,18 +14,29 @@ def match_keypoints(des1, des2):
 
     return matches
 
-def fund_matrix(kp1, kp2, matches):
+#
+#def fund_matrix(kp1, kp2, matches):
+#    pts1 = []
+#    pts2 = []
+#    for match in matches:
+#        pts1.append(kp1[match.queryIdx].pt)
+#        pts2.append(kp2[match.trainIdx].pt)
+#    
+#    pts1 = np.int32(pts1)
+#    pts2 = np.int32(pts2)
+#
+#    F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
+#
+
+def essential_matrix(kp1, kp2, matches, K):
     pts1 = []
     pts2 = []
     for match in matches:
         pts1.append(kp1[match.queryIdx].pt)
         pts2.append(kp2[match.trainIdx].pt)
-    
+
     pts1 = np.int32(pts1)
     pts2 = np.int32(pts2)
+    E, mask = cv2.findEssentialMat(pts1, pts2, K, method=cv2.RANSAC, prob=0.999, threshold=1.0)
 
-    F, mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
-    return F, mask, pts1, pts2
-
-def essential_matrix(kp1, kp2, matches, K):
-    return
+    return E, mask, pts1, pts2
