@@ -1,5 +1,17 @@
 import cv2
 import numpy as np
+import open3d as o3d
+import matplotlib.pyplot as plt
+
+def load_intrinsic_matrix(filepath):
+    with open(filepath, 'r') as file:
+        lines = file.readlines()
+    
+    # Extract the matrix values from the custom format
+    matrix_str = ''.join(lines).replace('K = [', '').replace(']', '').replace(';', '').strip()
+    matrix_values = [float(num) for num in matrix_str.split()]
+    matrix = np.array(matrix_values).reshape(3, 3)
+    return matrix
 
 def extract_keypoints(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -59,3 +71,30 @@ def draw_epipolar_lines(img1, img2, lines, pts1, pts2):
         img1 = cv2.circle(img1, tuple(pt1), 5, color, -1)
         img2 = cv2.circle(img2, tuple(pt2), 5, color, -1)
     return img1, img2
+
+def triangulate_points(points1, points2, P1, P2):
+    points4D = cv2.triangulatePoints(P1, P2, points1.T, points2.T)
+    points3D = points4D / points4D[3]
+    return points3D[:3].T
+
+def save_points_to_ply(points, filename):
+    point_cloud = o3d.geometry.PointCloud()
+    point_cloud.points = o3d.utility.Vector3dVector(points)
+    o3d.io.write_point_cloud(filename, point_cloud)
+
+def visualize_points(points):
+    point_cloud = o3d.geometry.PointCloud()
+    point_cloud.points = o3d.utility.Vector3dVector(points)
+    o3d.visualization.draw_geometries([point_cloud])
+def plot_points_matplotlib(points):
+    if points.size == 0:
+        print("No points to plot")
+        return
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(points[:, 0], points[:, 1], points[:, 2], c='r', marker='o')
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
+    plt.show()
