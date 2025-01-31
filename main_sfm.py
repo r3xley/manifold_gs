@@ -17,6 +17,8 @@ def main():
 
     matrix = load_intrinsic_matrix("./Data/intrinsic_matrix.txt")
     print(matrix)
+    K = np.array(matrix).reshape(3, 3)
+    print(K)
 
 
 

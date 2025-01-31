@@ -86,6 +86,7 @@ def visualize_points(points):
     point_cloud = o3d.geometry.PointCloud()
     point_cloud.points = o3d.utility.Vector3dVector(points)
     o3d.visualization.draw_geometries([point_cloud])
+
 def plot_points_matplotlib(points):
     if points.size == 0:
         print("No points to plot")
