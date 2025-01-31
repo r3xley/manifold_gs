@@ -20,6 +20,13 @@ def main():
     K = np.array(matrix).reshape(3, 3)
     print(K)
 
+    kp_list = []
+    des_list = []
+    for image in images:
+        kp, des = extract_keypoints(image)
+        kp_list.append(kp)
+        des_list.append(des)
+
 
 
 if __name__ == "__main__":
