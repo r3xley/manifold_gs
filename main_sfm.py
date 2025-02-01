@@ -27,6 +27,13 @@ def main():
         kp_list.append(kp)
         des_list.append(des)
 
+    # Match features between images
+    matches = []
+    for i in range(len(images) - 1):
+        matches.append(match_keypoints(des_list[i], des_list[i + 1]))
+
+    # Estimate the fundamental matrix
+
 
 
 if __name__ == "__main__":
