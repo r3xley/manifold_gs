@@ -32,7 +32,13 @@ def main():
     for i in range(len(images) - 1):
         matches.append(match_keypoints(des_list[i], des_list[i + 1]))
 
-    # Estimate the fundamental matrix
+    
+    # Estimate the essential matrix
+    essential_matrices = []
+    for i in range(len(images) - 1):
+        E, mask, pts1, pts2 = essential_matrix(kp_list[i], kp_list[i + 1], matches[i], K)
+        essential_matrices.append(E)
+
 
 
 
