@@ -25,10 +25,16 @@ def train_improved_gaussians(gaussians, target, num_steps=500, lr=0.015):
     for step in range(num_steps):
         optimizer.zero_grad()
         
-        rendered = render_improved(gaussians, img_size=target.shape[0])
+        rendered = render_improved(gaussians, img_size=target.shape[0])  # (H, W, 3)
+        
+        # Convert target to RGB if needed (for 2D grayscale targets)
+        if len(target.shape) == 2:
+            target_rgb = target.unsqueeze(-1).repeat(1, 1, 3)  # (H, W, 3)
+        else:
+            target_rgb = target
         
         # Reconstruction loss
-        recon_loss = ((rendered - target)**2).mean()
+        recon_loss = ((rendered - target_rgb)**2).mean()
         
         # Regularization
         opacities = gaussians.get_opacity()
@@ -122,9 +128,9 @@ def train_multiview_3d(gaussians, dataset, num_epochs=30, batch_size=1, lr=0.000
                 # Loss
                 recon_loss = ((img_pred - img_gt_hwc) ** 2).mean()
                 
-                # Regularization
-                opacity_reg = 0.01 * gaussians.get_opacity().mean()
-                scale_reg = 0.001 * (gaussians.get_scales() ** 2).mean()
+                # Regularization (reduced opacity reg to prevent black output)
+                opacity_reg = 0.001 * gaussians.get_opacity().mean()
+                scale_reg = 0.0001 * (gaussians.get_scales() ** 2).mean()
                 
                 loss = recon_loss + opacity_reg + scale_reg
                 batch_loss += loss
